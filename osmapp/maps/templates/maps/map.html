@@ -1,0 +1,25 @@
+<script>
+  var map = L.map('map').setView([10.32, 123.92], 15);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+  }).addTo(map);
+
+  fetch("/api/streets/")
+    .then(res => res.json())
+    .then(data => {
+      L.geoJSON(data, {
+        style: { color: "#FFDF22", weight: 4 },
+        onEachFeature: function (feature, layer) {
+          let popupContent = `
+            <div>
+              <h4>Segment ${feature.properties.osmid || feature.id || "?"}</h4>
+              <input type="text" placeholder="Enter info" />
+              <button onclick="alert('Save pressed')">Save</button>
+            </div>
+          `;
+          layer.bindPopup(popupContent);
+        }
+      }).addTo(map);
+    });
+</script>
